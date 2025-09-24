@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relógio com Troca de Cor</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFFFFF">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s;
+        }
+
+        #container {
+            background-color: rgba(211, 219, 219, 0.8);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 22px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            #container {
+                width: 90%;
+            }
+        }
+
+        h1 {
+            font-size: 22px;
+            animation: descendoVai 2s ease-in-out;
+        }
+
+        @keyframes descendoVai {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1 id="titulo">Bem Vindo!</h1>
+        <p id="hora"></p>
+        <p id="diaTipo"></p>
+        <p id="data"></p>
+        <p id="frase"></p>
+    </div>
+
+    <script>
+        let frasesGlobais = [];
+
+        function trocar() {
+            const agora = new Date();
+            const hora = agora.getHours();
+            const minutos = agora.getMinutes().toString().padStart(2, '0');
+            const segundos = agora.getSeconds().toString().padStart(2, '0');
+            const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dataFormatada = agora.toLocaleDateString('pt-BR', opcoes);
+            const diaSemana = agora.getDay();
+
+            let cor, mensagem, corTexto, tipoDia;
+
+            if (hora >= 6 && hora < 12) {
+                cor = "#FFFF00";
+                mensagem = "Bom dia! ☀️🥱✨";
+                corTexto = "black";
+                frasesGlobais = [
+                    "Acorde e brilhe! O mundo espera por você.",
+                    "Cada manhã é uma nova oportunidade.",
+                    "Sorria! Um novo dia começou.",
+                    "O sol está brilhando, assim como você."
+                ];
+            } else if (hora >= 12 && hora < 18) {
+                cor = "#FFE87C";
+                mensagem = "Boa tarde! 🌇🎶🕺";
+                corTexto = "black";
+                frasesGlobais = [
+                    "Aproveite cada momento desta tarde.",
+                    "O melhor ainda está por vir.",
+                    "Continue brilhando, mesmo à tarde."
+                ];
+            } else {
+                cor = "#1C1C1C";
+                mensagem = "Boa noite! 🌌🌙🎇";
+                corTexto = "white";
+                frasesGlobais = [
+                    "A noite é para sonhar e descansar.",
+                    "Que seus sonhos sejam tão brilhantes quanto as estrelas.",
+                    "Durma bem e acorde renovado."
+                ];
+            }
+
+            if (diaSemana === 0 || diaSemana === 6) {
+                tipoDia = "🥳 Hoje é fim de semana! Aproveite para descansar.";
+            } else {
+                tipoDia = "💼 Hoje é dia útil, foco nas atividades!";
+            }
+
+            // aplica no HTML
+            document.body.style.backgroundColor = cor;
+            document.body.style.color = corTexto;
+            document.getElementById("titulo").innerHTML = mensagem;
+            document.getElementById("hora").innerHTML =
+                "Agora são " + hora.toString().padStart(2, "0") + ":" + minutos + ":" + segundos;
+            document.getElementById("data").innerHTML = "📅 " + dataFormatada;
+            document.getElementById("diaTipo").innerHTML = tipoDia;
+        }
+
+        // atualiza a cada segundo
+        setInterval(trocar, 1000);
+        trocar();
+
+        // frases mudam separadamente a cada 5s
+        function trocarFrase() {
+            if (frasesGlobais.length > 0) {
+                const fraseAleatoria = frasesGlobais[Math.floor(Math.random() * frasesGlobais.length)];
+                document.getElementById("frase").innerText = fraseAleatoria;
+            }
+        }
+        setInterval(trocarFrase, 5000);
+        trocarFrase(); // mostra uma frase logo ao carregar
+        
+    </script>
+
+    <script>
+        
+        if("serviceWorker" in navigator){
+            navigator.serviceWorker.register("service-worker.js")
+            .then(() => console.log("Service Worker registrado"))
+            .catch(err => console.log("  Erro no SW:", err))
+        }
+
+    </script>
+</body>
+
+</html>
